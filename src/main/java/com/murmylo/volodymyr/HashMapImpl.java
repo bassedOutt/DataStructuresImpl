@@ -3,10 +3,7 @@ package com.murmylo.volodymyr;
 import com.murmylo.volodymyr.hashmap.HashMap;
 import lombok.AllArgsConstructor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class HashMapImpl<K, V> implements HashMap<K, V> {
 
@@ -37,7 +34,7 @@ public class HashMapImpl<K, V> implements HashMap<K, V> {
     }
 
     public V put(K key, V value) {
-        int hash = key.hashCode();
+        int hash = hash(key);
         int index = getIndex(hash);
         return putVal(index, key, value);
     }
@@ -102,7 +99,7 @@ public class HashMapImpl<K, V> implements HashMap<K, V> {
     private Optional<HashMapEntry<K, V>> existingEntry(K key, HashMapEntry<K, V> tableEntry) {
         HashMapEntry<K, V> entry = tableEntry;
         while (entry != null) {
-            if (entry.key.equals(key)) {
+            if (Objects.equals(entry.key, key)) {
                 return Optional.of(entry);
             }
             entry = entry.next;
@@ -111,14 +108,18 @@ public class HashMapImpl<K, V> implements HashMap<K, V> {
     }
 
     public V get(K key) {
-        int index = getIndex(key.hashCode());
+        int index = getIndex(hash(key));
         HashMapEntry<K, V> temp = table[index];
         while (temp != null) {
-            if (temp.key.equals(key)) {
+            if (Objects.equals(temp.key, key)) {
                 return temp.value;
             }
             temp = temp.next;
         }
         return null;
+    }
+
+    private int hash(K key) {
+        return key == null ? 0 : key.hashCode();
     }
 }
